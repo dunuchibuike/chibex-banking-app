@@ -49,19 +49,20 @@ const DashBoardLeft = () => {
       senderAccountID: fromAccount.id,
       recipientAccountNumber: recipientAccountNumber,
       reciepientID: recipientInfo.id,
-      amount: amount,
+      amount: Number(amount),
       memo: memo,
     }));
   }
 
   const getAccountInfo = () => {
-    const account = user.accounts.find(account => account.id == accountID);
+    const account = user?.accounts?.find(account => account.id == accountID);
+    console.log("dashboard left",account);
     setFromAccount(account);
   }
 
   useEffect(() => {
     getAccountInfo();
-  }, [accountID]);
+  }, [accountID, user]);
 
   useEffect(() => {
     console.log(recipientAccountNumber.length);

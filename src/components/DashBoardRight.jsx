@@ -8,14 +8,16 @@ const DashBoardRight = () => {
   const users = useSelector(state => state.users);
   const [theAccountInfo, setTheAccountInfo] = useState(null);
   const [theTransactions, setTheTransactions] = useState([]);
-  const accountInfo = users.find(user => user.accounts.some(account => account.id === fromAccount?.id)) || null;
-  const transactions = users?.transactions
+  
 
   useEffect(() => {
+    const accountInfo = users.find(e => e.id === user?.id) || null;
+    const transactions = accountInfo?.transactions || [];
     const account = accountInfo?.accounts?.find(account => account.id === fromAccount?.id);
+    console.log("dashboard right",user);
     setTheAccountInfo(account);
     setTheTransactions(transactions);
-  }, [fromAccount]);
+  }, [fromAccount, users, user]);
   
   
   return (
@@ -31,7 +33,7 @@ const DashBoardRight = () => {
         <p>Transactions History</p>
         
         {
-          transactions?.map((transaction, index) => (
+          theTransactions?.map((transaction, index) => (
             <div className="Bank_Content_Wrapper_Right_Bottom_Transaction" key={index}>
               <span>{transaction.type === "debit" ? "Debit:" : "Credit:"}</span>
               <span>{transaction.type === "debit" ? "-" : "+"} &#8358; {transaction.amount}</span>

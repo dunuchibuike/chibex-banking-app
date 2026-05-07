@@ -21,6 +21,7 @@ const LoginPage = () => {
       alert("Invalid credentials");
       return;
     }else if(password === user.password) {
+      console.log("login user",user);
       setUser(user);
       navigate("/dashboard");
     } else if(password !== user.password) {
