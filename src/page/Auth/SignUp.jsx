@@ -238,7 +238,9 @@ const SignUp = () => {
                     <Eye shown={showConfirm} onClick={() => setShowConfirm(!showConfirm)} />
                   </div>
                   <span className="field_error">
-                    {passwordsDoNotMatch ? "Passwords do not match" : ""}
+                    {passwordsDoNotMatch
+                      ? "Passwords differ. Check uppercase I and lowercase l."
+                      : ""}
                   </span>
                 </div>
 

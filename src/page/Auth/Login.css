@@ -251,6 +251,15 @@
   color: #616a7d;
 }
 
+/* Passwords often contain look-alike characters (I/l and 0/O). A monospaced
+   face makes them visibly distinct when the customer chooses to reveal them. */
+#password,
+#signup-password,
+#confirm-password {
+  font-family: "DM Mono", "Cascadia Mono", ui-monospace, monospace;
+  letter-spacing: 0.02em;
+}
+
 .toggle_password {
   flex: 0 0 44px;
   width: 44px;
