@@ -37,8 +37,9 @@ const getSignupErrorMessage = (error) => {
 };
 
 // Mobile keyboards and password managers can insert invisible whitespace.
-// It must not create an account that the customer cannot sign in to.
-const normalizePassword = (value) => value.trim();
+// Normalize it only when comparing/submitting; do not mutate an input while
+// the customer is typing.
+const trimPassword = (value) => value.trim();
 
 const SignUp = () => {
   const [step, setStep] = useState(1);
@@ -58,19 +59,16 @@ const SignUp = () => {
   const [confirmTouched, setConfirmTouched] = useState(false);
 
   const update = (field, value) => {
-    const nextValue =
-      field === "password" || field === "confirmPassword"
-        ? normalizePassword(value)
-        : value;
-
-    setUserInfo((current) => ({ ...current, [field]: nextValue }));
+    setUserInfo((current) => ({ ...current, [field]: value }));
     setFormError("");
   };
 
+  const password = trimPassword(userInfo.password);
+  const confirmPassword = trimPassword(userInfo.confirmPassword);
   const passwordsDoNotMatch =
     confirmTouched &&
-    userInfo.confirmPassword.length > 0 &&
-    userInfo.password !== userInfo.confirmPassword;
+    confirmPassword.length > 0 &&
+    password !== confirmPassword;
 
   const score = [
     userInfo.password.length >= 8,
@@ -94,16 +92,21 @@ const SignUp = () => {
   const handleSignUp = async (event) => {
     event.preventDefault();
 
+    // Use these local values for every decision below. This avoids relying on
+    // an asynchronous state update or invisible mobile-keyboard whitespace.
+    const password = trimPassword(userInfo.password);
+    const confirmPassword = trimPassword(userInfo.confirmPassword);
+
     if (
       !userInfo.fullName.trim() ||
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userInfo.emailAddress) ||
-      !userInfo.password ||
-      !userInfo.confirmPassword
+      !password ||
+      !confirmPassword
     ) {
       setFormError("Please complete all fields correctly.");
       return;
     }
-    if (userInfo.password !== userInfo.confirmPassword) {
+    if (password !== confirmPassword) {
       setConfirmTouched(true);
       return;
     }
@@ -114,7 +117,7 @@ const SignUp = () => {
       const payload = {
         fullName: userInfo.fullName.trim(),
         emailAddress: userInfo.emailAddress.trim().toLowerCase(),
-        password: userInfo.password,
+        password,
         initialBalance: INITIAL_ACCOUNT_BALANCE,
       };
 
@@ -192,8 +195,9 @@ const SignUp = () => {
                     <input
                       type={showPassword ? "text" : "password"}
                       id="signup-password"
+                      name="password"
                       value={userInfo.password}
-                      onChange={(event) => update("password", event.target.value)}
+                      onChange={(event) => update(event.target.name, event.target.value)}
                       onFocus={() => setFocused(true)}
                       placeholder="At least 8 characters"
                       autoComplete="new-password"
@@ -227,10 +231,11 @@ const SignUp = () => {
                     <input
                       type={showConfirm ? "text" : "password"}
                       id="confirm-password"
+                      name="confirmPassword"
                       value={userInfo.confirmPassword}
                       onChange={(event) => {
                         setConfirmTouched(true);
-                        update("confirmPassword", event.target.value);
+                        update(event.target.name, event.target.value);
                       }}
                       placeholder="Repeat your password"
                       autoComplete="new-password"
