@@ -10,7 +10,7 @@ import {
   FaLock,
   FaCheck,
 } from "react-icons/fa";
-import { BaseURL, INITIAL_ACCOUNT_BALANCE, ValidateInputs } from "../../lib/HighFunction";
+import { BaseURL, INITIAL_ACCOUNT_BALANCE } from "../../lib/HighFunction";
 import { AuthScene } from "./Login";
 
 const Eye = ({ shown, onClick }) => (
@@ -50,16 +50,18 @@ const SignUp = () => {
     password: "",
     confirmPassword: "",
   });
-  const [errorMsg, setErrorMsg] = useState({ err: false, name: "", msg: "" });
+  const [formError, setFormError] = useState("");
+  const [confirmTouched, setConfirmTouched] = useState(false);
 
   const update = (field, value) => {
     setUserInfo((current) => ({ ...current, [field]: value }));
-    if (field === "confirmPassword" && value && value !== userInfo.password) {
-      setErrorMsg({ err: true, name: field, msg: "Passwords do not match" });
-    } else {
-      setErrorMsg({ err: false, name: "", msg: "" });
-    }
+    setFormError("");
   };
+
+  const passwordsDoNotMatch =
+    confirmTouched &&
+    userInfo.confirmPassword.length > 0 &&
+    userInfo.password !== userInfo.confirmPassword;
 
   const score = [
     userInfo.password.length >= 8,
@@ -73,34 +75,31 @@ const SignUp = () => {
 
   const next = () => {
     if (!userInfo.fullName.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userInfo.emailAddress)) {
-      setErrorMsg({
-        err: true,
-        name: "general",
-        msg: "Enter your full name and a valid email address.",
-      });
+      setFormError("Enter your full name and a valid email address.");
       return;
     }
-    setErrorMsg({ err: false, name: "", msg: "" });
+    setFormError("");
     setStep(2);
   };
 
   const handleSignUp = async (event) => {
     event.preventDefault();
 
-    if (!ValidateInputs(userInfo, errorMsg, setErrorMsg)) return;
-    if (userInfo.password !== userInfo.confirmPassword) {
-      setErrorMsg({ err: true, name: "confirmPassword", msg: "Passwords do not match" });
+    if (
+      !userInfo.fullName.trim() ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userInfo.emailAddress) ||
+      !userInfo.password ||
+      !userInfo.confirmPassword
+    ) {
+      setFormError("Please complete all fields correctly.");
       return;
     }
-    if (!BaseURL) {
-      setErrorMsg({
-        err: true,
-        name: "general",
-        msg: "Signup server is not configured. Add VITE_BASE_URL on Vercel and redeploy.",
-      });
+    if (userInfo.password !== userInfo.confirmPassword) {
+      setConfirmTouched(true);
       return;
     }
 
+    setFormError("");
     setLoading(true);
     try {
       const payload = {
@@ -115,7 +114,7 @@ const SignUp = () => {
       navigate("/");
     } catch (error) {
       console.error("Signup failed", error.response?.status, error.response?.data || error.message);
-      setErrorMsg({ err: true, name: "general", msg: getSignupErrorMessage(error) });
+      setFormError(getSignupErrorMessage(error));
     } finally {
       setLoading(false);
     }
@@ -169,7 +168,7 @@ const SignUp = () => {
                   </div>
                 </div>
 
-                {errorMsg.name === "general" && <span className="error_text">{errorMsg.msg}</span>}
+                {formError && <span className="error_text" role="alert">{formError}</span>}
 
                 <button type="button" className="login_btn full_width_btn" onClick={next}>
                   Continue
@@ -220,18 +219,21 @@ const SignUp = () => {
                       type={showConfirm ? "text" : "password"}
                       id="confirm-password"
                       value={userInfo.confirmPassword}
-                      onChange={(event) => update("confirmPassword", event.target.value)}
+                      onChange={(event) => {
+                        setConfirmTouched(true);
+                        update("confirmPassword", event.target.value);
+                      }}
                       placeholder="Repeat your password"
                       autoComplete="new-password"
                     />
                     <Eye shown={showConfirm} onClick={() => setShowConfirm(!showConfirm)} />
                   </div>
                   <span className="field_error">
-                    {errorMsg.name === "confirmPassword" ? errorMsg.msg : ""}
+                    {passwordsDoNotMatch ? "Passwords do not match" : ""}
                   </span>
                 </div>
 
-                {errorMsg.name === "general" && <span className="error_text">{errorMsg.msg}</span>}
+                {formError && <span className="error_text" role="alert">{formError}</span>}
 
                 <label className="terms_checkbox">
                   <input type="checkbox" required />
