@@ -10,7 +10,7 @@ import {
   FaLock,
   FaCheck,
 } from "react-icons/fa";
-import { BaseURL, INITIAL_ACCOUNT_BALANCE } from "../../lib/HighFunction";
+import { BaseURL } from "../../lib/HighFunction";
 import { AuthScene } from "./Login";
 
 const Eye = ({ shown, onClick }) => (
@@ -56,23 +56,14 @@ const SignUp = () => {
     confirmPassword: "",
   });
   const [formError, setFormError] = useState("");
-  const [confirmTouched, setConfirmTouched] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
 
   const update = (field, value) => {
     // Clear stale validation UI before applying the next input value.
     setFormError("");
-    if (field === "password" || field === "confirmPassword") {
-      setConfirmTouched(false);
-    }
+    setPasswordError("");
     setUserInfo((current) => ({ ...current, [field]: value }));
   };
-
-  const password = trimPassword(userInfo.password);
-  const confirmPassword = trimPassword(userInfo.confirmPassword);
-  const passwordsDoNotMatch =
-    confirmTouched &&
-    confirmPassword.length > 0 &&
-    password !== confirmPassword;
 
   const score = [
     userInfo.password.length >= 8,
@@ -97,35 +88,36 @@ const SignUp = () => {
     event.preventDefault();
     // A submit always starts from a clean validation state.
     setFormError("");
-    setConfirmTouched(false);
+    setPasswordError("");
 
     // Use these local values for every decision below. This avoids relying on
     // an asynchronous state update or invisible mobile-keyboard whitespace.
-    const password = trimPassword(userInfo.password);
-    const confirmPassword = trimPassword(userInfo.confirmPassword);
+    const cleanPassword = trimPassword(userInfo.password);
+    const cleanConfirmPassword = trimPassword(userInfo.confirmPassword);
 
     if (
       !userInfo.fullName.trim() ||
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userInfo.emailAddress) ||
-      !password ||
-      !confirmPassword
+      !cleanPassword ||
+      !cleanConfirmPassword
     ) {
       setFormError("Please complete all fields correctly.");
       return;
     }
-    if (password !== confirmPassword) {
-      setConfirmTouched(true);
+    if (cleanPassword !== cleanConfirmPassword) {
+      setPasswordError("Passwords do not match");
       return;
     }
 
+    // The passwords match: remove any previous mismatch message and submit.
+    setPasswordError("");
     setFormError("");
     setLoading(true);
     try {
       const payload = {
         fullName: userInfo.fullName.trim(),
         emailAddress: userInfo.emailAddress.trim().toLowerCase(),
-        password,
-        initialBalance: INITIAL_ACCOUNT_BALANCE,
+        password: cleanPassword,
       };
 
       const response = await axios.post(`${BaseURL}/register`, payload);
@@ -240,19 +232,14 @@ const SignUp = () => {
                       id="confirm-password"
                       name="confirmPassword"
                       value={userInfo.confirmPassword}
-                      onChange={(event) => {
-                        setConfirmTouched(true);
-                        update(event.target.name, event.target.value);
-                      }}
+                      onChange={(event) => update(event.target.name, event.target.value)}
                       placeholder="Repeat your password"
                       autoComplete="new-password"
                     />
                     <Eye shown={showConfirm} onClick={() => setShowConfirm(!showConfirm)} />
                   </div>
                   <span className="field_error">
-                    {passwordsDoNotMatch
-                      ? "Passwords differ. Check uppercase I and lowercase l."
-                      : ""}
+                    {passwordError}
                   </span>
                 </div>
 
