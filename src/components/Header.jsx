@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./css/HeaderStyle.css";
-import Button from "./Button";
-import { IoMenu } from "react-icons/io5";
+import { IoLogOutOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BaseURL, getUserProfile } from "../lib/HighFunction.jsx";
@@ -50,9 +49,13 @@ const Header = () => {
             navigate("/");
           }}>Log out</button>
 
-          <div className="Header_Mobile_Toggle" >
-            <IoMenu className="Icon" />
-          </div>
+          <button className="Header_Mobile_Toggle" aria-label="Log out" onClick={() => {
+            localStorage.removeItem("token");
+            localStorage.removeItem("Id");
+            navigate("/");
+          }}>
+            <IoLogOutOutline className="Icon" />
+          </button>
         </div>
       </article>
     </header>

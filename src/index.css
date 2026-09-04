@@ -4,3 +4,28 @@
   box-sizing: border-box;
   font-family: sans-serif;
 }
+
+html {
+  width: 100%;
+  overflow-x: hidden;
+  background: #0a0b0d;
+}
+
+body {
+  width: 100%;
+  min-width: 320px;
+  overflow-x: hidden;
+  background: #0a0b0d;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+img,
+svg {
+  max-width: 100%;
+}

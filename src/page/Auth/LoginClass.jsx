@@ -3,9 +3,6 @@ import { useState } from 'react'
 const LoginClass = () => {
   
   const [ showText, setShowText] = useState ()
-  const displaytext = () => {
-    setShowText(displaytext)
-  }
 
   
 
