@@ -195,6 +195,10 @@
   gap: 7px;
 }
 
+.form_group_spaced {
+  margin-top: 17px;
+}
+
 .form_group > label,
 .field_label {
   font-size: 10px;
@@ -337,6 +341,11 @@
   transition: transform 0.22s, box-shadow 0.22s;
 }
 
+.full_width_btn {
+  width: 100%;
+  margin-top: 20px;
+}
+
 .login_btn::after {
   content: "";
   position: absolute;
@@ -427,6 +436,10 @@
 .step_actions {
   display: flex;
   gap: 10px;
+}
+
+.step_actions .login_btn {
+  flex: 1;
 }
 
 .secondary_btn {

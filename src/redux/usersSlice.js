@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { INITIAL_ACCOUNT_BALANCE } from "../lib/HighFunction";
 
 const usersSlice = createSlice({
     name: "users",
@@ -13,13 +14,13 @@ const usersSlice = createSlice({
                     id: 1,
                     name: "Main Account",
                     accountNumber: "1234567890",
-                    balance: 250000,
+                    balance: INITIAL_ACCOUNT_BALANCE,
                 },
                 {
                     id: 2,
                     name: "Savings Account",
                     accountNumber: "1234567891",
-                    balance: 250000,
+                    balance: INITIAL_ACCOUNT_BALANCE,
                 }
             ],
             transactions: [],
@@ -34,13 +35,13 @@ const usersSlice = createSlice({
                     id: 1,
                     name: "Main Account",
                     accountNumber: "1234567892",
-                    balance: 250000,
+                    balance: INITIAL_ACCOUNT_BALANCE,
                 },
                 {
                     id: 2,
                     name: "Savings Account",
                     accountNumber: "1234567893",
-                    balance: 250000,
+                    balance: INITIAL_ACCOUNT_BALANCE,
                 }
             ],
             transactions: [],
@@ -55,7 +56,7 @@ const usersSlice = createSlice({
                     id: 1,
                     name: "Main Account",
                     accountNumber: "1234567894",
-                    balance: 5000000,
+                    balance: INITIAL_ACCOUNT_BALANCE,
                 }
                 
             ],
@@ -71,7 +72,7 @@ const usersSlice = createSlice({
                     id: 1,
                     name: "Main Account",
                     accountNumber: "1234567895",
-                    balance: 5000000,
+                    balance: INITIAL_ACCOUNT_BALANCE,
                 }
             ],
             transactions: [],

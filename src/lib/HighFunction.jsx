@@ -18,6 +18,7 @@ export const ValidateInputs = ( userData , error, setErrorMsg) => {
 };
 
 export const BaseURL = import.meta.env.VITE_BASE_URL;
+export const INITIAL_ACCOUNT_BALANCE = 500000;
 
 export const getUserProfile = (profileName) => {
   if (!profileName) return ""; 
