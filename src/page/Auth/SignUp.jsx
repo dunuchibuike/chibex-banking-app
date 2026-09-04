@@ -59,8 +59,12 @@ const SignUp = () => {
   const [confirmTouched, setConfirmTouched] = useState(false);
 
   const update = (field, value) => {
-    setUserInfo((current) => ({ ...current, [field]: value }));
+    // Clear stale validation UI before applying the next input value.
     setFormError("");
+    if (field === "password" || field === "confirmPassword") {
+      setConfirmTouched(false);
+    }
+    setUserInfo((current) => ({ ...current, [field]: value }));
   };
 
   const password = trimPassword(userInfo.password);
@@ -91,6 +95,9 @@ const SignUp = () => {
 
   const handleSignUp = async (event) => {
     event.preventDefault();
+    // A submit always starts from a clean validation state.
+    setFormError("");
+    setConfirmTouched(false);
 
     // Use these local values for every decision below. This avoids relying on
     // an asynchronous state update or invisible mobile-keyboard whitespace.
