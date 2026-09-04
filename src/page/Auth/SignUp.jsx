@@ -36,6 +36,10 @@ const getSignupErrorMessage = (error) => {
   return error.message || "Signup failed. Please try again.";
 };
 
+// Mobile keyboards and password managers can insert invisible whitespace.
+// It must not create an account that the customer cannot sign in to.
+const normalizePassword = (value) => value.trim();
+
 const SignUp = () => {
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
@@ -54,7 +58,12 @@ const SignUp = () => {
   const [confirmTouched, setConfirmTouched] = useState(false);
 
   const update = (field, value) => {
-    setUserInfo((current) => ({ ...current, [field]: value }));
+    const nextValue =
+      field === "password" || field === "confirmPassword"
+        ? normalizePassword(value)
+        : value;
+
+    setUserInfo((current) => ({ ...current, [field]: nextValue }));
     setFormError("");
   };
 
