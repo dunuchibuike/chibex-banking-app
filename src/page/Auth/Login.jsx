@@ -60,7 +60,12 @@ const Login = () => {
       // The API may return the session directly or wrap it in { data: { ... } }.
       const responseData = response?.data ?? {};
       const session = responseData?.data ?? responseData?.result ?? responseData;
-      const token = session?.token ?? session?.accessToken ?? responseData?.token ?? responseData?.accessToken;
+      const token = [
+        response?.data?.token,
+        response?.data?.accessToken,
+        response?.data?.jwt,
+        response?.data?.data?.token,
+      ].find((candidate) => typeof candidate === "string" && candidate.trim()) ?? "";
       const user = session?.user ?? session?.userInfo ?? responseData?.user ?? responseData?.userInfo ?? {};
       const userId = user?._id ?? user?.id ?? user?.userId ?? session?.userId ?? responseData?.userId ?? getTokenUserId(token);
 
