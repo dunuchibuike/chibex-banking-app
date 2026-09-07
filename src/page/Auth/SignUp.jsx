@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "./Login.css";
 import axios from "axios";
 import { FaRegEye, FaRegEyeSlash, FaUser, FaEnvelope, FaLock, FaCheck } from "react-icons/fa";
-import { BaseURL, INITIAL_ACCOUNT_BALANCE, ValidateInputs } from "../../lib/HighFunction";
+import { BaseURL, ValidateInputs } from "../../lib/HighFunction";
 import { AuthScene } from "./Login";
 
 const Eye = ({ shown, onClick }) => (
@@ -66,8 +66,15 @@ const SignUp = () => {
     }
     setLoading(true);
     try {
-      const payload = { fullName: userInfo.fullName.trim(), emailAddress: userInfo.emailAddress.trim().toLowerCase(), password: userInfo.password, initialBalance: INITIAL_ACCOUNT_BALANCE };
-      const response = await axios.post(`${BaseURL}/register`, payload);
+      // Matches the Swagger schema for POST /api/v1/user/register exactly:
+      // { fullName, emailAddress, password, confirmPassword }
+      const payload = {
+        fullName: userInfo.fullName.trim(),
+        emailAddress: userInfo.emailAddress.trim().toLowerCase(),
+        password: userInfo.password,
+        confirmPassword: userInfo.confirmPassword,
+      };
+      const response = await axios.post(`${BaseURL}/user/register`, payload);
       alert(response.data?.message || "Account created successfully");
       navigate("/");
     } catch (error) {
