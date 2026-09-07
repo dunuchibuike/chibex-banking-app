@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "./Login.css";
 import { FaRegEye, FaRegEyeSlash, FaUser, FaLock, FaFingerprint, FaShieldAlt } from "react-icons/fa";
 import axios from "axios";
-import { BaseURL } from "../lib/HighFunction";
+import { BaseURL } from "../../lib/HighFunction";
 
 export const AuthScene = () => (
   <aside className="auth_scene">
