@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "../page/Dashboard/css/DashboardStyle.css";
-import { useEffect, useState } from "react";
 import "./css/ButtonStyle.css";
 import axios from "axios";
 import { BaseURL } from "../lib/HighFunction";
@@ -22,7 +21,8 @@ const DashBoardLeft = () => {
 
   const getAvailableBalance = async () => {
     try {
-      const accountResponse = await axios.get(`${BaseURL}/allAccounts`, authConfig);
+      // GET /api/v1/user/allAccounts
+      const accountResponse = await axios.get(`${BaseURL}/user/allAccounts`, authConfig);
       setAccountData(accountResponse.data?.data || []);
     } catch (err) {
       alert(err.response?.data?.message || "Unable to load your accounts.");
@@ -35,8 +35,9 @@ const DashBoardLeft = () => {
 
   const handleGetOneUser = async () => {
     try {
-      const userResponse = await axios.get(`${BaseURL}/user/${userId}`, authConfig);
-      setUserData(userResponse.data?.data || userResponse.data || {});
+      // GET /api/v1/user/user/{id} — response fields are top-level (fullName, emailAddress, etc.)
+      const userResponse = await axios.get(`${BaseURL}/user/user/${userId}`, authConfig);
+      setUserData(userResponse.data || {});
     } catch (err) {
       alert(err.response?.data?.message || "Unable to load your profile.");
     }
@@ -53,8 +54,9 @@ const DashBoardLeft = () => {
       return;
     }
     try {
+      // PUT /api/v1/user/transferFunds/{id} — {id} is the source Account ID (path param)
       const response = await axios.put(
-        `${BaseURL}/transferFunds/${accountID}`,
+        `${BaseURL}/user/transferFunds/${accountID}`,
         {
           recipientAccountNumber: recipientAccountNumber,
           amount: Number(amount),
@@ -82,8 +84,9 @@ const DashBoardLeft = () => {
 
     setCreatingPin(true);
     try {
+      // POST /api/v1/user/pin
       const response = await axios.post(
-        `${BaseURL}/pin`,
+        `${BaseURL}/user/pin`,
         { pin: newTransferPin },
         authConfig
       );

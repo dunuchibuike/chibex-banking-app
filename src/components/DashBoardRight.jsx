@@ -16,13 +16,28 @@ const DashBoardRight = () => {
     const loadDashboardData = async () => {
       try {
         const [balanceResponse, accountsResponse, userResponse] = await Promise.all([
-          axios.get(`${BaseURL}/totalBalance`, authConfig),
-          axios.get(`${BaseURL}/allAccounts`, authConfig),
-          axios.get(`${BaseURL}/user/${userId}`, authConfig),
+          axios.get(`${BaseURL}/user/totalBalance`, authConfig),
+          axios.get(`${BaseURL}/user/allAccounts`, authConfig),
+          axios.get(`${BaseURL}/user/user/${userId}`, authConfig),
         ]);
-        const balance = balanceResponse.data?.totalFunds ?? balanceResponse.data?.data?.totalFunds ?? 0;
+
+        // NOTE: the Swagger example for totalBalance only shows { message },
+        // no visible balance field. Checking a few likely field names below —
+        // if your balance still shows 0, log balanceResponse.data to console
+        // and tell me the real field name so this can be corrected exactly.
+        const balancePayload = balanceResponse.data || {};
+        const balance =
+          balancePayload.totalFunds ??
+          balancePayload.totalBalance ??
+          balancePayload.balance ??
+          balancePayload.data?.totalFunds ??
+          balancePayload.data?.totalBalance ??
+          balancePayload.data?.balance ??
+          0;
+
         const accounts = accountsResponse.data?.data || [];
-        const profile = userResponse.data?.data || userResponse.data || {};
+        const profile = userResponse.data || {};
+
         setAccountBalance(balance);
         setAccountData(accounts);
         setTheTransactions(profile.transactions || []);
@@ -63,7 +78,7 @@ const DashBoardRight = () => {
       </div>
       <div className="Bank_Form_Wrapper_Right_Bottom">
         <p>Transactions History</p>
-        
+
         {theTransactions.length > 0 ? (
           theTransactions?.map((transaction, index) => (
             <div className="Bank_Content_Wrapper_Right_Bottom_Transaction" key={index}>

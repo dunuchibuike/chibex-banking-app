@@ -6,28 +6,27 @@ import axios from "axios";
 import { BaseURL, getUserProfile } from "../lib/HighFunction.jsx";
 
 const Header = () => {
-  // console.log(user);
   const navigate = useNavigate();
 
   const userId = localStorage.getItem("Id");
   const token = localStorage.getItem("token");
   const [userData, setUserData] = useState({});
 
-  const handleGetUser = async() => {
+  const handleGetUser = async () => {
     try {
-      const userRes = await axios.get(`${BaseURL}/user/${userId}`, {
+      // GET /api/v1/user/user/{id} — fields are top-level, not nested under "data"
+      const userRes = await axios.get(`${BaseURL}/user/user/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setUserData(userRes?.data?.data || userRes?.data || {});
+      setUserData(userRes?.data || {});
     } catch (error) {
       console.error("Unable to load user", error.response?.data || error);
     }
-  }
+  };
 
   useEffect(() => {
     handleGetUser();
   }, [userId, token]);
-
 
   return (
     <header className="header_Container">
