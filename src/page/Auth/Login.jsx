@@ -23,6 +23,35 @@ const getErrorMessage = (error) => {
   return data?.message || data?.error || error.message || "Login failed";
 };
 
+const getSessionToken = (response) => {
+  const data = response?.data;
+  const candidates = [
+    data?.token,
+    data?.accessToken,
+    data?.jwt,
+    data?.jwtToken,
+    data?.authToken,
+    data?.access_token,
+    data?.data?.token,
+    data?.data?.accessToken,
+    data?.data?.jwt,
+    data?.data?.jwtToken,
+    data?.data?.authToken,
+    data?.result?.token,
+    data?.result?.accessToken,
+    data?.result?.jwt,
+    data?.user?.token,
+    data?.user?.accessToken,
+    data?.user?.jwt,
+    response?.headers?.authorization,
+    response?.headers?.Authorization,
+    typeof data === "string" ? data : "",
+  ];
+
+  const token = candidates.find((candidate) => typeof candidate === "string" && candidate.trim());
+  return token?.trim().replace(/^Bearer\s+/i, "") ?? "";
+};
+
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -60,12 +89,7 @@ const Login = () => {
       // The API may return the session directly or wrap it in { data: { ... } }.
       const responseData = response?.data ?? {};
       const session = responseData?.data ?? responseData?.result ?? responseData;
-      const token = [
-        response?.data?.token,
-        response?.data?.accessToken,
-        response?.data?.jwt,
-        response?.data?.data?.token,
-      ].find((candidate) => typeof candidate === "string" && candidate.trim()) ?? "";
+      const token = getSessionToken(response);
       const user = session?.user ?? session?.userInfo ?? responseData?.user ?? responseData?.userInfo ?? {};
       const userId = user?._id ?? user?.id ?? user?.userId ?? session?.userId ?? responseData?.userId ?? getTokenUserId(token);
 
