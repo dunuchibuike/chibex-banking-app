@@ -14,11 +14,12 @@ const Header = () => {
 
   const handleGetUser = async () => {
     try {
-      // GET /api/v1/user/user/{id} — fields are top-level, not nested under "data"
+      // GET /api/v1/user/user/{id}
+      // Confirmed live response shape: { message, data: { fullName, emailAddress, ... } }
       const userRes = await axios.get(`${BaseURL}/user/user/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setUserData(userRes?.data || {});
+      setUserData(userRes?.data?.data || {});
     } catch (error) {
       console.error("Unable to load user", error.response?.data || error);
     }

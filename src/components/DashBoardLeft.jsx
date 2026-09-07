@@ -35,9 +35,10 @@ const DashBoardLeft = () => {
 
   const handleGetOneUser = async () => {
     try {
-      // GET /api/v1/user/user/{id} — response fields are top-level (fullName, emailAddress, etc.)
+      // GET /api/v1/user/user/{id}
+      // Confirmed live response shape: { message, data: { fullName, emailAddress, ... } }
       const userResponse = await axios.get(`${BaseURL}/user/user/${userId}`, authConfig);
-      setUserData(userResponse.data || {});
+      setUserData(userResponse.data?.data || {});
     } catch (err) {
       alert(err.response?.data?.message || "Unable to load your profile.");
     }
